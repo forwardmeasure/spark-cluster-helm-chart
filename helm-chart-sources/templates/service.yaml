@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: spark-master-service
+  labels:
+    app: spark
+    component: master
+spec:
+  type: {{ .Values.master.service.type }}
+  ports:
+    - port: {{ .Values.master.service.port }}
+      targetPort: {{ .Values.master.service.port }}
+  selector:
+    app: spark
+    component: master

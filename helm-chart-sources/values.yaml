@@ -1,0 +1,43 @@
+# Configuration for Spark Master
+master:
+  image:
+    repository: spark-master
+    tag: "3.0.0"
+  replicas: 1
+  service:
+    type: ClusterIP
+    port: 7077
+  resources:
+    limits:
+      cpu: "2000m"
+      memory: "4Gi"
+    requests:
+      cpu: "1000m"
+      memory: "2Gi"
+
+# Configuration for Spark Workers
+worker:
+  image:
+    repository: spark-worker
+    tag: "3.0.0"
+  replicas: 2
+  resources:
+    limits:
+      cpu: "1500m"
+      memory: "3Gi"
+    requests:
+      cpu: "750m"
+      memory: "1.5Gi"
+
+# Persistent Volume Claim
+persistence:
+  enabled: true
+  storageClass: "manual"
+  accessModes:
+    - ReadWriteOnce
+  size: 10Gi
+  existingClaim: "" # Option to provide an existing PVC
+
+# Custom Labels
+labels: {}
+

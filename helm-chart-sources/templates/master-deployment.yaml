@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-master
+  labels:
+    app: spark
+    component: master
+    {{- with .Values.labels }}
+    {{ toYaml . | indent 4 }}
+    {{- end }}
+spec:
+  replicas: {{ .Values.master.replicas }}
+  selector:
+    matchLabels:
+      app: spark
+      component: master
+  template:
+    metadata:
+      labels:
+        app: spark
+        component: master
+    spec:
+      containers:
+        - name: spark-master
+          image: "{{ .Values.master.image.repository }}:{{ .Values.master.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.master.service.port }}
+          resources:
+            limits:
+              cpu: {{ .Values.master.resources.limits.cpu }}
+              memory: {{ .Values.master.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.master.resources.requests.cpu }}
+              memory: {{ .Values.master.resources.requests.memory }}
+          volumeMounts:
+            - name: spark-storage
+              mountPath: /data
+      volumes:
+        - name: spark-storage
+          persistentVolumeClaim:
+            claimName: {{ if .Values.persistence.existingClaim }}{{ .Values.persistence.existingClaim }}{{ else }}spark-pvc{{ end }}
+
