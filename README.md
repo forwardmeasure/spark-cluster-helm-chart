@@ -12,11 +12,11 @@ This guide shows how to host a Helm chart repository using GitHub Pages, providi
 ### Step 1: Create a GitHub Repository
 1. Log into GitHub, create a new repository, e.g., `my-helm-charts`.
 2. Clone the repository to your local machine:
-   ```
-   git clone https://github.com/your-username/my-helm-charts.git
+    ```
+    git clone https://github.com/your-username/my-helm-charts.git
 3. Inside the repo directory, create a charts/ folder for Helm charts:
     ```
-    cd my-helm-charts && mkdir charts
+    cd my-helm-charts && mkdir chartss
 ### Step 2: Add and Package Helm Charts
 1. Move into the charts/ directory:
     ```
