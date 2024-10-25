@@ -1,3 +1,13 @@
 apiVersion: v1
-entries: {}
-generated: "2024-10-25T04:16:19.542751435-04:00"
+entries:
+  spark-cluster:
+  - apiVersion: v2
+    appVersion: 4.0.0
+    created: "2024-10-25T04:24:15.694131811-04:00"
+    description: A Helm chart for Spark Cluster deployment
+    digest: ac19ce658375617dc9d9faed6818de4822107f624872c2da20bcc0e73f3548da
+    name: spark-cluster
+    urls:
+    - https://forwardmeasure.github.io/spark-cluster-helm-chart/spark-cluster-1.0.0.tgz
+    version: 1.0.0
+generated: "2024-10-25T04:24:15.693881188-04:00"
