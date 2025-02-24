@@ -2,7 +2,7 @@
 master:
   image:
     repository: spark-master
-    tag: "3.0.0"
+    tag: "4.0.0-preview2-scala2.13-java21-python3-ubuntu"
   replicas: 1
   service:
     type: ClusterIP
@@ -19,7 +19,7 @@ master:
 worker:
   image:
     repository: spark-worker
-    tag: "3.0.0"
+    tag: "4.0.0-preview2-scala2.13-java21-python3-ubuntu"
   replicas: 2
   resources:
     limits:
