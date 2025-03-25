@@ -1,5 +1,7 @@
 #!/bin/bash -x
 
+set -eo pipefail
+
 UNAME=$(tr [A-Z] [a-z] <<< "$(uname)")
 SCRIPT_DIR="$( cd "$( echo "${BASH_SOURCE[0]%/*}/" )"; pwd )"
 
