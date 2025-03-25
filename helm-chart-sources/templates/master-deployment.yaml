@@ -36,8 +36,8 @@ spec:
             value: {{ .Values.master.service.uiPort | quote }}
           - name: SPARK_MASTER_HOST
             valueFrom:
-            fieldRef:
-                fieldPath: status.podIP
+              fieldRef:
+                  fieldPath: status.podIP
           ports:
           - name: cluster
             containerPort: {{ .Values.master.service.port }}
