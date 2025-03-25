@@ -1,0 +1,12 @@
+{{- if .Values.pdb.master.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: spark-master-pdb
+spec:
+  minAvailable: {{ .Values.pdb.master.minAvailable }}
+  selector:
+    matchLabels:
+      app: spark
+      component: master
+{{- end }}

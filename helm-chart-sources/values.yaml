@@ -1,12 +1,18 @@
+nameOverride: ""
+fullnameOverride: ""
+
 # Configuration for Spark Master
 master:
   image:
-    repository: spark-master
+    repository: docker.io/spark-master
     tag: "4.0.0-preview2-scala2.13-java21-python3-ubuntu"
+    pullPolicy: Always
   replicas: 1
   service:
     type: ClusterIP
     port: 7077
+    uiPort: 8080
+    nodePort: 32077
   resources:
     limits:
       cpu: "2000m"
@@ -18,8 +24,9 @@ master:
 # Configuration for Spark Workers
 worker:
   image:
-    repository: spark-worker
+    repository: docker.io/spark-worker
     tag: "4.0.0-preview2-scala2.13-java21-python3-ubuntu"
+    pullPolicy: Always
   replicas: 2
   resources:
     limits:
@@ -30,14 +37,73 @@ worker:
       memory: "1.5Gi"
 
 # Persistent Volume Claim
+# ----------------------------------------
+# ⚙️ Persistence Configuration Modes Guide
+#
+# Mode 1: Shared PVC (recommended default)
+# ----------------------------------------
+# persistence:
+#   enabled: true
+#   shared: true
+#   sharedClaim: spark-shared-pvc
+#   existingClaim: ""
+#   accessModes:
+#     - ReadWriteOnce
+#   size: 10Gi
+#   storageClass: standard
+#   mountPath: /data
+#
+# Mode 2: Separate PVCs for Master and Worker
+# -------------------------------------------
+# persistence:
+#   enabled: true
+#   shared: false
+#   masterClaim: spark-master-pvc
+#   workerClaim: spark-worker-pvc
+#   existingClaim: ""
+#   accessModes:
+#     - ReadWriteOnce
+#   size: 10Gi
+#   storageClass: standard
+#   mountPath: /data
+#
+# Mode 3: External Pre-created PVC (manual provisioning)
+# ------------------------------------------------------
+# persistence:
+#   enabled: false
+#   shared: true     # (or false — ignored when using existingClaim)
+#   existingClaim: spark-external-pvc
+#   accessModes:
+#     - ReadWriteOnce
+#   size: 10Gi       # ignored
+#   storageClass: standard  # ignored
+#   mountPath: /data
+# ----------------------------------------
+
 persistence:
   enabled: true
-  storageClass: "manual"
+  storageClass: standard
   accessModes:
     - ReadWriteOnce
   size: 10Gi
-  existingClaim: "" # Option to provide an existing PVC
+  mountPath: /data
+  shared: true
+  sharedClaim: spark-pvc
+  # existingClaim:
+  # masterClaim: spark-master-pvc
+  # workerClaim: spark-worker-pvc
 
 # Custom Labels
 labels: {}
 
+# Placement
+affinity: {}
+tolerations: []
+
+pdb:
+  master:
+    enabled: true
+    minAvailable: 1
+  worker:
+    enabled: true
+    maxUnavailable: 1

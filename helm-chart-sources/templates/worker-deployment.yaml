@@ -23,6 +23,7 @@ spec:
       containers:
         - name: spark-worker
           image: "{{ .Values.worker.image.repository }}:{{ .Values.worker.image.tag }}"
+          imagePullPolicy: {{ .Values.worker.image.pullPolicy }}
           resources:
             limits:
               cpu: {{ .Values.worker.resources.limits.cpu }}
@@ -32,9 +33,18 @@ spec:
               memory: {{ .Values.worker.resources.requests.memory }}
           volumeMounts:
             - name: spark-storage
-              mountPath: /data
+              mountPath: {{ .Values.persistence.mountPath }}
       volumes:
         - name: spark-storage
           persistentVolumeClaim:
-            claimName: {{ if .Values.persistence.existingClaim }}{{ .Values.persistence.existingClaim }}{{ else }}spark-pvc{{ end }}
-
+            claimName: {{ if .Values.persistence.existingClaim }}
+                            {{ .Values.persistence.existingClaim }}
+                        {{- else if .Values.persistence.shared }}
+                            {{ .Values.persistence.sharedClaim }}
+                        {{- else }}
+                            {{ .Values.persistence.workerClaim }}
+                        {{- end }}
+      affinity:
+        {{- toYaml .Values.affinity | nindent 8 }}
+      tolerations:
+        {{- toYaml .Values.tolerations | nindent 8 }}

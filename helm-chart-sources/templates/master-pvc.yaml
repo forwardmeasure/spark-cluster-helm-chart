@@ -1,8 +1,8 @@
-{{- if .Values.persistence.enabled }}
+{{- if and .Values.persistence.enabled (not .Values.persistence.shared) (not .Values.persistence.existingClaim) }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: spark-pvc
+  name: {{ .Values.persistence.masterClaim }}
 spec:
   accessModes:
     {{- range .Values.persistence.accessModes }}

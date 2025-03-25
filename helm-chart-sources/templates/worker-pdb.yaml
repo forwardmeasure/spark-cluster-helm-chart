@@ -1,0 +1,12 @@
+{{- if .Values.pdb.worker.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: spark-worker-pdb
+spec:
+  maxUnavailable: {{ .Values.pdb.worker.maxUnavailable }}
+  selector:
+    matchLabels:
+      app: spark
+      component: worker
+{{- end }}
