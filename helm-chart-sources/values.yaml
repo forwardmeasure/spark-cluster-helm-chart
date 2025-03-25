@@ -4,7 +4,7 @@ fullnameOverride: ""
 # Configuration for Spark Master
 master:
   image:
-    repository: docker.io/spark-master
+    repository: docker.io/spark
     tag: "4.0.0-preview2-scala2.13-java21-python3-ubuntu"
     pullPolicy: Always
   replicas: 1
@@ -24,7 +24,7 @@ master:
 # Configuration for Spark Workers
 worker:
   image:
-    repository: docker.io/spark-worker
+    repository: docker.io/spark
     tag: "4.0.0-preview2-scala2.13-java21-python3-ubuntu"
     pullPolicy: Always
   replicas: 2
