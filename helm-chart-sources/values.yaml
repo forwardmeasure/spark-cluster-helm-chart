@@ -9,6 +9,7 @@ master:
     pullPolicy: Always
   replicas: 1
   service:
+    name: spark-master-service
     type: ClusterIP
     port: 7077
     uiPort: 8080
@@ -27,7 +28,15 @@ worker:
     repository: docker.io/spark
     tag: "4.0.0-preview2-scala2.13-java21-python3-ubuntu"
     pullPolicy: Always
+
+  cores: 1
+  memory: 1g
   replicas: 2
+
+  ui:
+    enabled: false # toggle this to true to expose Spark Worker UI
+    port: 8081 # internal port for the web UI
+
   resources:
     limits:
       cpu: "1500m"

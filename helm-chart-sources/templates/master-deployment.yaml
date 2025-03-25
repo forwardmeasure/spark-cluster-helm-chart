@@ -24,8 +24,26 @@ spec:
         - name: spark-master
           image: "{{ .Values.master.image.repository }}:{{ .Values.master.image.tag }}"
           imagePullPolicy: {{ .Values.master.image.pullPolicy }}
+          command:
+          - /opt/spark/bin/spark-class
+          - org.apache.spark.deploy.master.Master
+          env:
+          - name: SPARK_NO_DAEMONIZE
+            value: true
+          - name: SPARK_MASTER_PORT
+            value: {{ .Values.master.service.port | quote }}
+          - name: SPARK_MASTER_WEBUI_PORT
+            value: {{ .Values.master.service.uiPort | quote }}
+          - name: SPARK_MASTER_HOST
+            valueFrom:
+            fieldRef:
+                fieldPath: status.podIP
           ports:
-            - containerPort: {{ .Values.master.service.port }}
+          - name: cluster
+            containerPort: {{ .Values.master.service.port }}
+          - name: webui
+            containerPort: {{ .Values.master.service.uiPort }}
+
           resources:
             limits:
               cpu: {{ .Values.master.resources.limits.cpu }}
@@ -33,14 +51,15 @@ spec:
             requests:
               cpu: {{ .Values.master.resources.requests.cpu }}
               memory: {{ .Values.master.resources.requests.memory }}
+          
           volumeMounts:
             - name: spark-storage
               mountPath: {{ .Values.persistence.mountPath }}
       volumes:
         - name: spark-storage
           persistentVolumeClaim:
-            claimName: {{ if .Values.persistence.existingClaim }}
-                            {{ .Values.persistence.existingClaim }}
+            claimName:  {{ if .Values.persistence.existingClaim }}
+                          {{ .Values.persistence.existingClaim }}
                         {{- else if .Values.persistence.shared }}
                             {{ .Values.persistence.sharedClaim }}
                         {{- else }}

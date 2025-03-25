@@ -24,6 +24,32 @@ spec:
         - name: spark-worker
           image: "{{ .Values.worker.image.repository }}:{{ .Values.worker.image.tag }}"
           imagePullPolicy: {{ .Values.worker.image.pullPolicy }}
+          command:
+            - /opt/spark/bin/spark-class
+            - org.apache.spark.deploy.worker.Worker
+            - spark://{{ .Values.master.service.name }}:{{ .Values.master.service.port }}
+          env:
+            - name: SPARK_NO_DAEMONIZE
+              value: "true"
+            - name: SPARK_WORKER_CORES
+              value: {{ .Values.worker.cores | quote }}
+            - name: SPARK_WORKER_MEMORY
+              value: {{ .Values.worker.memory | quote }}
+            - name: SPARK_LOCAL_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            {{- if .Values.worker.ui.enabled }}
+            - name: SPARK_WORKER_WEBUI_PORT
+              value: "{{ .Values.worker.ui.port | quote }}"
+            {{- end }}
+          
+          ports:
+            {{- if .Values.worker.ui.enabled }}
+            - name: webui
+              containerPort: {{ .Values.worker.ui.port }}
+            {{- end }}
+          
           resources:
             limits:
               cpu: {{ .Values.worker.resources.limits.cpu }}
@@ -31,18 +57,20 @@ spec:
             requests:
               cpu: {{ .Values.worker.resources.requests.cpu }}
               memory: {{ .Values.worker.resources.requests.memory }}
+          
           volumeMounts:
             - name: spark-storage
               mountPath: {{ .Values.persistence.mountPath }}
+
       volumes:
         - name: spark-storage
           persistentVolumeClaim:
-            claimName: {{ if .Values.persistence.existingClaim }}
-                            {{ .Values.persistence.existingClaim }}
+            claimName: {{- if .Values.persistence.existingClaim }}
+                          {{ .Values.persistence.existingClaim }}
                         {{- else if .Values.persistence.shared }}
-                            {{ .Values.persistence.sharedClaim }}
+                          {{ .Values.persistence.sharedClaim }}
                         {{- else }}
-                            {{ .Values.persistence.workerClaim }}
+                          {{ .Values.persistence.workerClaim }}
                         {{- end }}
       affinity:
         {{- toYaml .Values.affinity | nindent 8 }}
